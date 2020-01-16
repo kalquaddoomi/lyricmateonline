@@ -20,6 +20,7 @@ class SongButton extends Component {
 const styles = StyleSheet.create({
     songButton: {
         borderColor: 'black',
+        height: 40,
         borderWidth: 1,
         backgroundColor: '#8888ff',
         marginTop:5,

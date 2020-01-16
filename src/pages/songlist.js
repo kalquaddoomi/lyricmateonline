@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Text, View, Alert } from 'react-native';
+import {Text, View, Alert, ScrollView, StyleSheet} from 'react-native';
+
 import SongButton from "../components/songbutton";
 
 class SongList extends Component {
@@ -11,16 +12,24 @@ class SongList extends Component {
     }
     render() {
         return(
-            <View style={{flex: 1, justifyContent: "center", alignItems: "center"}}>
+            <ScrollView style={styles.songContainer}>
+                <View>
                 {this.props.songlist.map((song) => {
                         return (
                             <SongButton key={song.id} song={song} pressCallback={this.songSelectCallback.bind(this)}/>
                         )
                     }
                 )}
-            </View>
+                </View>
+            </ScrollView>
         )
     }
 }
+
+const styles = StyleSheet.create({
+    songContainer: {
+
+    },
+});
 
 export default SongList;
