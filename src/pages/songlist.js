@@ -7,20 +7,20 @@ class SongList extends Component {
     constructor(props) {
         super(props);
     }
-    songSelectCallback(songId) {
-        this.props.songSelected(songId)
+    songSelectCallback(song, listposition) {
+        this.props.songSelected(song, listposition)
     }
     render() {
+        let { songlist } = this.props;
+        songlist.sort((a, b) => (a.title > b.title) ? 1 : -1)
         return(
             <ScrollView style={styles.songContainer}>
-                <View>
-                {this.props.songlist.map((song) => {
+                {songlist.map((song, index) => {
                         return (
-                            <SongButton key={song.id} song={song} pressCallback={this.songSelectCallback.bind(this)}/>
+                            <SongButton key={song.id} song={song} listposition={index} pressCallback={this.songSelectCallback.bind(this)}/>
                         )
                     }
                 )}
-                </View>
             </ScrollView>
         )
     }

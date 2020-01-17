@@ -3,9 +3,7 @@ import Lyricmate from './src/lyricmate'
 
 export default function App() {
   return(
-      <Lyricmate
-
-      />
+      <Lyricmate />
   )
 }
 

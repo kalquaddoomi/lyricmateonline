@@ -6,11 +6,11 @@ class SongButton extends Component {
         const {width, height} = Dimensions.get('window');
         const buttonWidth = width / 1.2;
         return(
-            <View style={[styles.songButton, {width: buttonWidth}]}>
+            <View style={[styles.songButton, {width: buttonWidth}]} key={this.props.listposition}>
             <Button
                 color={"white"}
                 title={this.props.song.title}
-                onPress={() => this.props.pressCallback(this.props.song.id)}
+                onPress={() => this.props.pressCallback(this.props.song, this.props.listposition)}
             />
             </View>
         )

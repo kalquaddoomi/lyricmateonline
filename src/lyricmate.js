@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {StyleSheet, Text, View, Button, Dimensions, SafeAreaView, Alert} from "react-native";
+import {StyleSheet, Text, View, Button, Dimensions, SafeAreaView, Alert, AsyncStorage} from "react-native";
 
 import * as FileSystem from 'expo-file-system';
 import Constants from 'expo-constants';
@@ -8,26 +8,74 @@ import SongList from "./pages/songlist";
 import Lyrics from "./pages/lyrics"
 
 
-const songs = [
-    {id: 1, title: "The Saints"},
-    {id: 2, title: "Ain't my Fault"}
-    ]
+const lyricSizes = {
+    mini: {name: "Mini", size: 12, bigger: "small", smaller: "none"},
+    small: {name: "Small", size: 16, bigger: "medium", smaller: "mini"},
+    medium: {name: "Medium", size: 20, bigger: "large", smaller: "small"},
+    large: {name: "Large", size: 28, bigger: "xlarge", smaller: "medium"},
+    xlarge: {name: "X-Large", size: 36, bigger: "none", smaller: "large"}
+};
+
+
+
 class Lyricmate extends Component {
+
     constructor(props) {
         super(props);
         this.state = {
-            currentSongId: null,
-            songs: []
+            currentSong: null,
+            listPosition: 0,
+            songs: [],
+            fontSize: lyricSizes.xlarge,
+            downloadURI: "https://lyric-manager.herokuapp.com/api/songlist"
         }
     }
-    songSelectionChange(songId) {
-        this.setState({currentSongId: songId})
+    songSelectionChange(song, listposition) {
+        this.setState({currentSong: song, listPosition: listposition})
     }
 
+    fontSizeChange(new_size, initialLoad = false) {
+        let newSize = this.state.fontSize;
+        switch(new_size) {
+            case 'mini':
+                newSize = lyricSizes.mini;
+                break;
+            case 'small':
+                newSize = lyricSizes.small;
+                break;
+            case 'medium':
+                newSize = lyricSizes.medium;
+                break;
+            case 'large':
+                newSize = lyricSizes.large;
+                break;
+            case 'xlarge':
+                newSize = lyricSizes.xlarge;
+                break;
+            default:
+                break;
+        }
+        this.writeSettingsFile(newSize);
+        this.setState({fontSize: newSize});
+    }
+
+    writeSettingsFile(size) {
+        const fileName = FileSystem.documentDirectory + "settings.json";
+        FileSystem.writeAsStringAsync(fileName, JSON.stringify(size));
+    }
+
+    readSettingsFile() {
+        const fileName = FileSystem.documentDirectory + "settings.json";
+        FileSystem.readAsStringAsync(fileName).then((result) => {
+            const newSize = JSON.parse(result);
+            this.setState({fontSize: newSize});
+        })
+    }
+
+
     downloadSonglist() {
-        console.log("Downloading the Song List")
         const fileName = FileSystem.documentDirectory + "songlist2.json";
-        FileSystem.downloadAsync("http://localhost:3000/api/songlist", fileName).then((value) => {
+        FileSystem.downloadAsync(this.state.downloadURI, fileName).then((value) => {
             Alert.alert("Download Complete!");
             this.readSongList();
         }).catch((reason) => {
@@ -45,13 +93,13 @@ class Lyricmate extends Component {
     }
 
     componentDidMount() {
-        this.readSongList()
+        this.readSongList();
+        this.readSettingsFile();
     }
 
     render() {
-
         let output = '';
-        if(this.state.currentSongId === null) {
+        if(this.state.currentSong === null) {
             output = <View>
                 <Button onPress={() => this.downloadSonglist()} title={"Download the Song List"}/>
                 <Text style={styles.introLine}>Pair ~ A ~ Dice Tumblers</Text>
@@ -59,15 +107,17 @@ class Lyricmate extends Component {
                 <SongList
                     songlist={this.state.songs}
                     songSelected={this.songSelectionChange.bind(this)}
+                    listPosition={this.state.listPosition}
                 />
             </View>
         } else {
             output = <View>
                 <Button
                 title={"Back to Song List"}
-                onPress={() => this.setState({currentSongId: null})}
+                onPress={() => this.setState({currentSong: null})}
                     />
-                <Text style={styles.headLine}>Lyrics for Song #{this.state.currentSongId}</Text>
+
+                <Lyrics song={this.state.currentSong} lyricSize={this.state.fontSize} changeSize={this.fontSizeChange.bind(this)}/>
 
             </View>
         }
