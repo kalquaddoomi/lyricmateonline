@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {StyleSheet, Text, View, Button, Dimensions, SafeAreaView, Alert, AsyncStorage} from "react-native";
+import {StyleSheet, Text, View, Button, Dimensions, SafeAreaView, Alert, BackHandler} from "react-native";
 
 import * as FileSystem from 'expo-file-system';
 import Constants from 'expo-constants';
@@ -19,7 +19,6 @@ const lyricSizes = {
 
 
 class Lyricmate extends Component {
-
     constructor(props) {
         super(props);
         this.state = {
@@ -30,6 +29,7 @@ class Lyricmate extends Component {
             downloadURI: "https://lyric-manager.herokuapp.com/api/songlist"
         }
     }
+
     songSelectionChange(song, listposition) {
         this.setState({currentSong: song, listPosition: listposition})
     }
@@ -72,7 +72,6 @@ class Lyricmate extends Component {
         })
     }
 
-
     downloadSonglist() {
         const fileName = FileSystem.documentDirectory + "songlist2.json";
         FileSystem.downloadAsync(this.state.downloadURI, fileName).then((value) => {
@@ -88,14 +87,30 @@ class Lyricmate extends Component {
         FileSystem.readAsStringAsync(fileName).then((value) => {
             this.setState({songs: JSON.parse(value)})
         }).catch((reason) => {
-            Alert.alert("Failed to load Song List, please try downloading the list using 'Download' button")
+            Alert.alert("Lyric Mate needs to download the song list the first time it runs")
+            this.downloadSonglist();
         })
     }
 
+    handleBackPress() {
+        if(this.state.currentSong != null) {
+            this.setState({currentSong: null});
+            return true;
+        } else {
+            return true;
+        }
+    }
+
     componentDidMount() {
+        this.backHandler = BackHandler.addEventListener('hardwareBackPress', this.handleBackPress.bind(this));
         this.readSongList();
         this.readSettingsFile();
     }
+
+    componentWillUnmount() {
+        this.backHandler.remove();
+    }
+
 
     render() {
         let output = '';
@@ -112,10 +127,12 @@ class Lyricmate extends Component {
             </View>
         } else {
             output = <View>
+                <View style={{marginBottom: 10}}>
                 <Button
                 title={"Back to Song List"}
                 onPress={() => this.setState({currentSong: null})}
                     />
+                </View>
 
                 <Lyrics song={this.state.currentSong} lyricSize={this.state.fontSize} changeSize={this.fontSizeChange.bind(this)}/>
 
@@ -131,7 +148,7 @@ class Lyricmate extends Component {
 
 const styles = StyleSheet.create({
     container: {
-        marginTop: Constants.statusBarHeight,
+        marginTop: Constants.statusBarHeight + 10,
         flex: 1,
         backgroundColor: '#fff',
         alignItems: 'center',

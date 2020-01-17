@@ -8,7 +8,6 @@ class SongButton extends Component {
         return(
             <View style={[styles.songButton, {width: buttonWidth}]} key={this.props.listposition}>
             <Button
-                color={"white"}
                 title={this.props.song.title}
                 onPress={() => this.props.pressCallback(this.props.song, this.props.listposition)}
             />
@@ -20,10 +19,9 @@ class SongButton extends Component {
 const styles = StyleSheet.create({
     songButton: {
         borderColor: 'black',
-        height: 40,
+        height: 38,
         borderWidth: 1,
-        backgroundColor: '#8888ff',
-        marginTop:5,
+        marginTop:10,
     }
 });
 
