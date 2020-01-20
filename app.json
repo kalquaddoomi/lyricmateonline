@@ -24,8 +24,7 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": ""
+      "supportsTablet": true
     },
     "android": {
       "package": "com.twintreelabs.lyricmateonlie"

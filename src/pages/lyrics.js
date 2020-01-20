@@ -12,6 +12,7 @@ class Lyrics extends Component {
         const renderWidth = width * 0.9;
         return(
             <View style={{
+                height: height,
                 width: renderWidth,
                 display: "flex",
                 flexDirection: "column",
@@ -35,7 +36,7 @@ class Lyrics extends Component {
                     />
                 </View>
                 <Text style={styles.lyricHeadLine}>{this.props.song.title}</Text>
-                <ScrollView>
+                <ScrollView style={{marginBottom: 80}}>
                     <Text style={[styles.lyrics, {fontSize: this.props.lyricSize.size}]}>
                         {this.props.song.lyrics}
                     </Text>

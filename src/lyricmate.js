@@ -69,7 +69,12 @@ class Lyricmate extends Component {
         FileSystem.readAsStringAsync(fileName).then((result) => {
             const newSize = JSON.parse(result);
             this.setState({fontSize: newSize});
+        }).catch((reason) => {
+            if(reason.includes('ENOENT')) {
+                this.writeSettingsFile(lyricSizes.medium);
+            }
         })
+
     }
 
     downloadSonglist() {
