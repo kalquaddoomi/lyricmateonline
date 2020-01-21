@@ -12,7 +12,11 @@ class SongList extends Component {
     }
     render() {
         let { songlist } = this.props;
-        songlist.sort((a, b) => (a.title > b.title) ? 1 : -1)
+        songlist.sort((a, b) => (a.title > b.title) ? 1 : -1);
+        songlist.filter((song) => {if(song.tags != null) {
+            return !song.tags.includes('disabled')
+        }});
+        console.log(songlist);
         return(
             <ScrollView style={styles.songContainer}>
                 {songlist.map((song, index) => {
