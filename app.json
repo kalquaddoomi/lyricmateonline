@@ -9,7 +9,7 @@
       "android",
       "web"
     ],
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/Dice1024x1024.png",
     "splash": {
@@ -27,7 +27,7 @@
       "supportsTablet": true
     },
     "android": {
-      "package": "com.twintreelabs.lyricmateonlie"
+      "package": "com.twintreelabs.lyricmateonline"
     }
   }
 }
