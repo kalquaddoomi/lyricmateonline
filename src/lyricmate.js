@@ -26,7 +26,8 @@ class Lyricmate extends Component {
             listPosition: 0,
             songs: [],
             fontSize: lyricSizes.xlarge,
-            downloadURI: "https://lyric-manager.herokuapp.com/api/songlist"
+            downloadURI: "https://lyric-manager.herokuapp.com/api/songlist",
+            error: ""
         }
     }
 
@@ -92,8 +93,8 @@ class Lyricmate extends Component {
         FileSystem.readAsStringAsync(fileName).then((value) => {
             this.setState({songs: JSON.parse(value)})
         }).catch((reason) => {
-            Alert.alert("Lyric Mate needs to download the song list the first time it runs")
-            this.downloadSonglist();
+                Alert.alert(`${reason}`)
+                this.setState({error:`There was a problem: ${reason}`})
         })
     }
 
@@ -119,6 +120,12 @@ class Lyricmate extends Component {
 
     render() {
         let output = '';
+        let error = null;
+        if(this.state.error.length > 0) {
+             error = <View>
+                <Text>{this.state.error}</Text>
+            </View>
+        }
         if(this.state.currentSong === null) {
             output = <View>
                 <Button onPress={() => this.downloadSonglist()} title={"Download the Song List"}/>
@@ -145,6 +152,7 @@ class Lyricmate extends Component {
         }
             return (
                 <SafeAreaView style={styles.container}>
+                    {error}
                     {output}
                 </SafeAreaView>
             );

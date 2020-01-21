@@ -24,10 +24,12 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.alquaddoomi.lyricmateonline"
     },
     "android": {
-      "package": "com.twintreelabs.lyricmateonlie"
+      "package": "com.twintreelabs.lyricmateonlie",
+      "versionCode": 2
     }
   }
 }
