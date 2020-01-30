@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {StyleSheet, Text, View, Button, Dimensions, SafeAreaView, Alert, BackHandler} from "react-native";
 
 import * as FileSystem from 'expo-file-system';
+import { useKeepAwake } from "expo-keep-awake";
 import Constants from 'expo-constants';
 
 import SongList from "./pages/songlist";
@@ -29,6 +30,7 @@ class Lyricmate extends Component {
             downloadURI: "https://lyric-manager.herokuapp.com/api/songlist",
             error: ""
         }
+        this.downloadtries = 0;
     }
 
     songSelectionChange(song, listposition) {
@@ -93,8 +95,11 @@ class Lyricmate extends Component {
         FileSystem.readAsStringAsync(fileName).then((value) => {
             this.setState({songs: JSON.parse(value)})
         }).catch((reason) => {
-                Alert.alert(`${reason}`)
-                this.setState({error:`There was a problem: ${reason}`})
+            if(this.downloadtries < 3) {
+                Alert.alert(`Downloading the Song List for the First Time (Try ${this.downloadtries} of 3`);
+                this.downloadtries = this.downloadtries + 1;
+                this.downloadSonglist();
+            }
         })
     }
 
@@ -120,12 +125,6 @@ class Lyricmate extends Component {
 
     render() {
         let output = '';
-        let error = null;
-        if(this.state.error.length > 0) {
-             error = <View>
-                <Text>{this.state.error}</Text>
-            </View>
-        }
         if(this.state.currentSong === null) {
             output = <View>
                 <Button onPress={() => this.downloadSonglist()} title={"Download the Song List"}/>
@@ -150,12 +149,12 @@ class Lyricmate extends Component {
 
             </View>
         }
-            return (
-                <SafeAreaView style={styles.container}>
-                    {error}
-                    {output}
-                </SafeAreaView>
-            );
+        useKeepAwake();
+        return (
+            <SafeAreaView style={styles.container}>
+                {output}
+            </SafeAreaView>
+        );
     }
 }
 
